@@ -1,0 +1,1 @@
+A program I wrote that if you input a .txt file of words separated by spaces should return each word alphabetized (using bubble sort) and should tell you if any words are anagrams for each other in the file.
