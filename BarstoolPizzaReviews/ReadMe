@@ -1,0 +1,4 @@
+I thought it would be funny to make a program that says practically what El Prez from Barstool Sports says every time he does a pizza review. 
+The .txt file has a list of around 100 pizza places that I use for names that circulate every time you run the program.
+I had to use a random number generator with uniform distribution because I didn't want to see the same pizza shop names popping up every time.
+One bite, everybody knows the rules.
