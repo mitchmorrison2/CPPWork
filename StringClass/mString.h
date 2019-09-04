@@ -1,5 +1,6 @@
 #ifndef MSTRING_H
 #define MSTRING_H
+#include <iostream>
 
 class mString
 {
@@ -31,8 +32,7 @@ public:
 
     char* c_str();
 
-//	friend std::ostream& operator<< (std::ostream&, const mString&);
+    friend std::ostream& operator<< (std::ostream&, const mString&);
 };
 
 #endif // MSTRING_H
-
