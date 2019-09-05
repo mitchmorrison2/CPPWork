@@ -6,50 +6,60 @@
 
 using namespace std;
 
-int* readInTeam1(int amtPlayers1);
-int* readInTeam2(int amtPlayers2);
-int** readInMatches();
-void separateTeamsInfo(int *team1Nums, int *team2Nums, int** taggingInfo);
+int* readInTeam1(int* team1amt);
+int* readInTeam2(int* team2amt);
+int** readInMatches(int *rowsPtr);
+void separateTeamsInfo(int *team1Nums, int *team2Nums, int **taggingInfo, int rowsOfInfo, int amtPlayers1, int amtPlayers2, int **team1Tags, int **team2Tags);
 //void lowVerbosityOutput();
 
-int main()
-{
-    int *team1Nums = nullptr, amtPlayers1 = 0;
-    team1Nums = readInTeam1(amtPlayers1);
-    int *team2Nums = nullptr, amtPlayers2 = 0;
-    team2Nums = readInTeam2(amtPlayers2);
+//This is a comment in main driver
+
+int main(int argc, char **argv) {
+
+    int *team1Nums = nullptr;
+    int amtPlayers1 = 0, amtPlayers2 = 0, rowsOfInfo = 0;
+    int *team1amt = &amtPlayers1, *team2amt = &amtPlayers2, *rowsPtr = &rowsOfInfo;
+    team1Nums = readInTeam1(team1amt);
+    int *team2Nums = nullptr;
+    team2Nums = readInTeam2(team2amt);
     int **taggingInfo = nullptr;
-    taggingInfo = readInMatches();
-    separateTeamsInfo(team1Nums, team2Nums, taggingInfo);
+    taggingInfo = readInMatches(rowsPtr);
+    int **team1Tags = new int*[rowsOfInfo];
+    int **team2Tags = new int*[rowsOfInfo];
+    separateTeamsInfo(team1Nums, team2Nums, taggingInfo, rowsOfInfo, amtPlayers1, amtPlayers2, team1Tags, team2Tags);
     return 0;
 }
 
-int* readInTeam1(int amtPlayers1) {
+int* readInTeam1(int *team1amt) {
     char fileName[] = "Cowboys.txt";
     fstream fIn(fileName);
-    if (!fIn.is_open()) cout << fileName << " not opening" << endl;
+    if (!fIn.is_open()) {
+        cout << fileName << " not opening" << endl;
+    }
     char buffer[40], teamName[40];
-
     fIn.getline(teamName, 40);
-    fIn >> amtPlayers1;
-    int *playerNums = new int[amtPlayers1];
-    mString *playerNames = new mString[amtPlayers1];
+    int numPlayers1;
+    fIn >> numPlayers1;
+    cout << numPlayers1 << endl;
+    *team1amt = numPlayers1;
+    int *playerNums = new int[numPlayers1];
+    mString *playerNames = new mString[numPlayers1];
     int tempNum;
 
     int counter = 0;
-    while (!fIn.eof()) {
+    while (fIn.is_open()) {
         fIn >> tempNum;
         playerNums[counter] = tempNum;
         fIn >> buffer;
         playerNames[counter] = buffer;
         counter++;
-        if (counter == amtPlayers1) {
+        if (counter == *team1amt) {
             break;
         }
     }
     fIn.close();
-    cout << "Team name: " << teamName << endl << "Num players: " << amtPlayers1 << endl;
-    for (int i = 0; i < amtPlayers1; i++) {
+    cout << "Team name: " << teamName << endl << "Num players: " << numPlayers1 << endl;
+    for (int i = 0; i < numPlayers1; i++) {
         mString temp = playerNames[i];
         cout << "Player number: " << playerNums[i] << endl;
         cout << "Player name: " << playerNames[i] << endl;
@@ -58,18 +68,17 @@ int* readInTeam1(int amtPlayers1) {
     return playerNums;
   }
 
-int* readInTeam2(int amtPlayers2) {
+int* readInTeam2(int* team2amt) {
     char fileName[] = "Sharks.txt";
     fstream fIn(fileName);
     if (!fIn.is_open()) cout << fileName << " not opening" << endl;
     char buffer[40], teamName[40];
-
     fIn.getline(teamName, 40);
-    fIn >> amtPlayers2;
-    int *playerNums = new int[amtPlayers2]; // = new int[amtPlayers];
-    mString *playerNames = new mString[amtPlayers2]; // = new mString[amtPlayers];
-
+    fIn >> *team2amt;
+    int *playerNums = new int[*team2amt];
+    mString *playerNames = new mString[*team2amt]; // = new mString[amtPlayers];
     int tempNum; //copy into playerNums
+
     int counter = 0;
     while (fIn.is_open()) {
         fIn >> tempNum;
@@ -77,14 +86,14 @@ int* readInTeam2(int amtPlayers2) {
         fIn >> buffer;
         playerNames[counter] = buffer;
         counter++;
-        if (counter == amtPlayers2) {
+        if (counter == *team2amt) {
             break;
         }
     }
     fIn.close();
 
-    cout << "Team name: " << teamName << endl << "Num players: " << amtPlayers2 << endl;
-    for (int i = 0; i < amtPlayers2; i++) {
+    cout << "Team name: " << teamName << endl << "Num players: " << *team2amt << endl;
+    for (int i = 0; i < *team2amt; i++) {
         mString temp = playerNames[i];
         cout << "Player number: " << playerNums[i] << endl;
         cout << "Player name: " << temp << endl;  //once friend << operator works this should work
@@ -93,28 +102,30 @@ int* readInTeam2(int amtPlayers2) {
     return playerNums;
 }
 
-int** readInMatches() {
+int** readInMatches(int *rowsPtr) {
     char fileName[] = "match1.txt";
     fstream fIn(fileName);
-    int rowsOfInfo, colCount = 4;
-    fIn >> rowsOfInfo;
-    int **taggingInfo = new int* [rowsOfInfo];
-    for (int i = 0; i < rowsOfInfo; i++) {
+    int colCount = 4;
+    int rowsAmt;
+    fIn >> rowsAmt;
+    *rowsPtr = rowsAmt;
+    int **taggingInfo = new int* [*rowsPtr];
+    for (int i = 0; i < *rowsPtr; i++) {
         taggingInfo[i] = new int[colCount];
     }
-    int rows = 0;
+    int row = 0;
     int counter = 0;
     while(!fIn.eof()) {
-        fIn >> taggingInfo[rows][counter];
+        fIn >> taggingInfo[row][counter];
         counter++;
         if (counter == colCount) {
             counter = 0;
-            rows++;
+            row++;
         }
     }
     fIn.close();
 
-    for (int x = 0; x < rowsOfInfo; x++) {
+    for (int x = 0; x < *rowsPtr; x++) {
         for (int y = 0; y < colCount; y++) {
             cout << taggingInfo[x][y] << " ";
             if (y == colCount -1) cout << endl;
@@ -124,11 +135,25 @@ int** readInMatches() {
     return taggingInfo;
 }
 
-void separateTeamsInfo(int *team1Nums, int *team2Nums, int **taggingInfo) {
+void separateTeamsInfo(int *team1Nums, int *team2Nums, int **taggingInfo, int rowsOfInfo, int amtPlayers1, int amtPlayers2, int **team1Tags, int **team2Tags) {
+    int counterTeam1 = 0, counterTeam2 = 0;
 
-
-
-//    int team1tags[][] = 0; //create 2 arrays with their tags separate to simplify. Just use the first number from each row to distinguish teams
-//    int team2tags[][] = 0;
-
+    for (int r = 0; r < rowsOfInfo; r++) { //rows of info needs to be passed properly or called by readInMatches method so it passes back proper information
+         for (int w = 0; w < amtPlayers1; w++) {
+              if (taggingInfo[r][0] == team1Nums[w]) {
+                  team1Tags[counterTeam1] = taggingInfo[r]; //place tag into new 2d array
+                  cout << team1Tags[w] << endl;
+                  counterTeam1++;
+                  break;
+              }
+         } //inside for loop
+            for (int y = 0; y < amtPlayers2; y++) {
+                 if (taggingInfo[r][0] == team2Nums[y]) {
+                   team2Tags[counterTeam2] = taggingInfo[r]; //place tag into new 2d array
+                   cout << team2Tags[y] << endl;
+                   counterTeam2++;
+                   break;
+                 }
+            } //inside for loop
+    } //outside for loop
 }
