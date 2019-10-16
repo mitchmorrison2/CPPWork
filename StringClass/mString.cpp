@@ -92,7 +92,7 @@ mString mString::substring(int startingPoint, int lengthAndDirection) {
     if(lengthAndDirection > 0) strncpy(copy.data, &data[startingPoint], unsigned (lengthAndDirection));
     else strncpy(copy.data, &data[startingPoint - lengthAndDirection], unsigned (lengthAndDirection));
     return copy;
-}
+} //returning segfault?
 
 char* mString::c_str() {
     return data;
@@ -103,5 +103,7 @@ std::ostream& operator<< (std::ostream& output, const mString& p) { //should thi
     output << p.data;
     return output;
 }
+
+
 
 
