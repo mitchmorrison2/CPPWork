@@ -1,9 +1,11 @@
 #include <iostream>
+#include "parser.h"
 
 using namespace std;
 
 int main()
 {
-    cout << "Hello World!" << endl;
+    parser p;
+    p.go();
     return 0;
 }
