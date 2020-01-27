@@ -9,6 +9,7 @@ using namespace std;
 short int counter = 0;
 char wordList[50][20];
 
+//3 functions to open, read, and alphabetize the words in file
 void openFile();
 void compareArrays();
 void alphabetize();
